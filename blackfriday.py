@@ -7,18 +7,21 @@ Created on Sat Jun 15 12:45:23 2019
 """
 
 import pandas as pd
-import numpy as np
 from matplotlib import pyplot as plt
 
-pd.set_option('display.width', 100)
-pd.set_option('precision', 3)
+base = pd.read_csv("train.csv")
 
-train = pd.read_csv("train.csv")
+base.drop(['Product_Category_2', 'Product_Category_3'], axis=1, inplace=True)
+base.head()
+base['Product_ID'].value_counts()
+base.groupby('User_ID')['Product_ID'].count()
 
-#y = train.iloc[:,11].values
-#X = train.iloc[:,3].values
-#correlacao = np.corrcoef(X, y)
 
-train.hist()
 
-plt.show()
+X = base.iloc[:, :-1].values
+
+X['User_ID'].value_counts()
+
+from sklearn.preprocessing import LabelEncoder
+encoder = LabelEncoder()
+encoder.fit()
