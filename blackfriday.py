@@ -9,6 +9,13 @@ Created on Sat Jun 15 12:45:23 2019
 import pandas as pd
 from matplotlib import pyplot as plt
 
+from sklearn.metrics import mean_absolute_error
+
+def score_dataset(model, X_train, X_val, y_train, y_val):
+    model.fit(X_train, y_train)
+    predicts = model.predict(X_val)
+    return mean_absolute_error(y_val, predicts)
+
 # Load data
 base = pd.read_csv("train.csv")
 data = base.drop(['User_ID', 'Product_ID', 'Product_Category_2', 
@@ -34,15 +41,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 
 from sklearn.linear_model import LinearRegression
 regressor = LinearRegression()
-regressor.fit(X_train, y_train)
-regressor.score(X_train, y_train)
+print('MAE LinearRegression {}'.format(score_dataset(regressor, X_train, X_test, y_train, y_test)))
 
-forecasts = regressor.predict(X_test)
-
-from sklearn.metrics import mean_absolute_error
-mae = mean_absolute_error(y_test, forecasts)
-
-
-
-
-
+from sklearn.ensemble import RandomForestRegressor
+random_regressor = RandomForestRegressor(random_state=1, n_estimators=200)
+print('MAE RandomForestRegressor {}'.format(score_dataset(random_regressor, X_train, X_test, y_train, y_test)))
