@@ -18,22 +18,31 @@ def score_dataset(model, X_train, X_val, y_train, y_val):
 
 # Load data
 base = pd.read_csv("train.csv")
-data = base.drop(['User_ID', 'Product_ID', 'Product_Category_2', 
-                  'Product_Category_3', 'Gender', 'City_Category',
-                  'Stay_In_Current_City_Years'], axis=1)
+
+target = 'Purchase'
+features = ['User_ID', 'Product_ID', 'Gender', 'Age', 'Occupation', 'City_Category',
+            'Stay_In_Current_City_Years', 'Marital_Status', 'Product_Category_1']
+
+# missing_cols = [col for col in base.columns if base[col].isnull().any()]
+# We will remove missing values columns
 
 # Separate features and target
-X = data.iloc[:, :-1].values
-y = data.iloc[:, 4].values
-# y = y.reshape(-1, 1)
+X = base[features].copy()
+y = base.Purchase.copy()
+
+# Finding categorical features
+# s = (X.dtypes == 'object')
+# object_cols = list(s[s].index)
 
 # Treat categorical features, in order, using label encoder
 from sklearn.preprocessing import LabelEncoder
 encoder = LabelEncoder()
-X[:, 0] = encoder.fit_transform(X[:, 0])
-X[:, 1] = encoder.fit_transform(X[:, 1])
-# X[:, 3] = encoder.fit_transform(X[:, 3])
-# X[:, 4] = encoder.fit_transform(X[:, 4])
+
+X['Age'] = encoder.fit_transform(X['Age'])
+X['Gender'] = encoder.fit_transform(X['Gender'])
+X['Product_ID'] = encoder.fit_transform(X['Product_ID'])
+X['City_Category'] = encoder.fit_transform(X['City_Category'])
+X['Stay_In_Current_City_Years'] = encoder.fit_transform(X['Stay_In_Current_City_Years'])
 
 # Split data
 from sklearn.model_selection import train_test_split
@@ -44,5 +53,5 @@ regressor = LinearRegression()
 print('MAE LinearRegression {}'.format(score_dataset(regressor, X_train, X_test, y_train, y_test)))
 
 from sklearn.ensemble import RandomForestRegressor
-random_regressor = RandomForestRegressor(random_state=1, n_estimators=200)
+random_regressor = RandomForestRegressor(random_state=1, n_estimators=30)
 print('MAE RandomForestRegressor {}'.format(score_dataset(random_regressor, X_train, X_test, y_train, y_test)))
