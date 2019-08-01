@@ -30,6 +30,7 @@ features = ['User_ID', 'Product_ID', 'Gender', 'Age', 'Occupation', 'City_Catego
 X = base[features].copy()
 y = base.Purchase.copy()
 
+
 # Finding categorical features
 # s = (X.dtypes == 'object')
 # object_cols = list(s[s].index)
