@@ -30,7 +30,6 @@ features = ['User_ID', 'Product_ID', 'Gender', 'Age', 'Occupation', 'City_Catego
 X = base[features].copy()
 y = base.Purchase.copy()
 
-
 # Finding categorical features
 # s = (X.dtypes == 'object')
 # object_cols = list(s[s].index)
@@ -45,14 +44,20 @@ X['Product_ID'] = encoder.fit_transform(X['Product_ID'])
 X['City_Category'] = encoder.fit_transform(X['City_Category'])
 X['Stay_In_Current_City_Years'] = encoder.fit_transform(X['Stay_In_Current_City_Years'])
 
-# Split data
+# Split test and train data
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 from sklearn.linear_model import LinearRegression
 regressor = LinearRegression()
 print('MAE LinearRegression {}'.format(score_dataset(regressor, X_train, X_test, y_train, y_test)))
 
 from sklearn.ensemble import RandomForestRegressor
-random_regressor = RandomForestRegressor(random_state=1, n_estimators=30)
+random_regressor = RandomForestRegressor(random_state=1, n_estimators=100)
 print('MAE RandomForestRegressor {}'.format(score_dataset(random_regressor, X_train, X_test, y_train, y_test)))
+
+random_regressor.fit(X, y)
+predicts = random_regressor.predict(X) 
+
+submission = pd.Series(predicts, index=y['Purchase'])
+y.Purchase
